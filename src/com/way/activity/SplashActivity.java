@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import com.way.util.PreferenceConstants;
 import com.way.util.PreferenceUtils;
 import com.way.xx.R;
-
+///
 public class SplashActivity extends FragmentActivity {
 	private Handler mHandler;
 

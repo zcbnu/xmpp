@@ -3,6 +3,7 @@ package com.way.activity;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -18,7 +19,7 @@ import com.way.util.T;
 import com.way.xx.R;
 /**
  * 2014-05-21
- * @author li
+ * @author li5jun
  * 注册页面的实现
  */
 public class RegisterActivity extends Activity {
@@ -28,7 +29,7 @@ public class RegisterActivity extends Activity {
 	private EditText mRegisterAccount;
 	private static  AccountManager mUserAccount;
 	
-    private static Connection connection;
+    private static XMPPConnection connection;
 
     private static ConnectionConfiguration config;
 	@Override
@@ -61,9 +62,15 @@ public class RegisterActivity extends Activity {
 					T.showShort(RegisterActivity.this, "请输入帐号");
 				}else{
 					try {
-						mUserAccount=connection.getAccountManager();
-						mUserAccount.createAccount(account, passwd1);
-					} catch (XMPPException e) {
+							if(connection.isConnected()){
+								mUserAccount=connection.getAccountManager();
+								mUserAccount.createAccount(account, passwd1);
+							}
+							else
+							{
+								T.showShort(RegisterActivity.this, "not connection，请与li5jun@126.com联系");
+							}
+						} catch (XMPPException e) {
 						// TODO Auto-generated catch block
 						T.showShort(RegisterActivity.this, "建立用户错误，请与li5jun@126.com联系");
 						e.printStackTrace();
@@ -84,45 +91,72 @@ public class RegisterActivity extends Activity {
 
             /** 5222是openfire服务器默认的通信端口，你可以登录http://192.168.8.32:9090/到管理员控制台查看客户端到服务器端口 */
 
-            config = new ConnectionConfiguration(PreferenceConstants.Server, 5222);
-
-            
-
-            /** 是否启用压缩 */ 
-
-            config.setCompressionEnabled(true);
-
-            /** 是否启用安全验证 */
-
-            config.setSASLAuthenticationEnabled(true);
-
-            /** 是否启用调试 */
-
-            config.setDebuggerEnabled(false);
-
-            config.setReconnectionAllowed(true);
-
-            config.setRosterLoadedAtLogin(true);
-
+//            config = new ConnectionConfiguration(PreferenceConstants.GMAIL_SERVER);
+//
+//            
+//
+//            /** 是否启用压缩 */ 
+//
+//            config.setCompressionEnabled(false);
+//
+//            /** 是否启用安全验证 */
+//
+//            config.setSASLAuthenticationEnabled(false);
+//
+//            /** 是否启用调试 */
+////
+////            config.setDebuggerEnabled(false);
+////
+////            config.setReconnectionAllowed(false);
+////
+////            config.setRosterLoadedAtLogin(false);
+//    		config.setReconnectionAllowed(false);
+//    		config.setSendPresence(false);
             
 
             /** 创建connection链接 */
 
-            connection = new XMPPConnection(config);
+            connection = new XMPPConnection(new ConnectionConfiguration("192.168.1.9"));
 
             /** 建立连接 */
 
-            connection.connect();
+            if(connection.isConnected())
+            {
+            	try{
+            		connection.disconnect();
+            	}
+            	catch(Exception e)
+            	{}
+            }
+//			SmackConfiguration.setPacketReplyTimeout(30000);// 设置超时时间
+//			SmackConfiguration.setKeepAliveInterval(-1);
+//			SmackConfiguration.setDefaultPingInterval(0);
+//			registerRosterListener();// 监听联系人动态变化
+            
+            new Thread(){
+            	@Override
+            	public void run(){
+                	try
+                	{
+                		connection.connect();
+                	}
+                	catch(XMPPException e)
+                	{}
+            	}
 
-        } catch (XMPPException e) {
+            }.start();
+//			connection.connect();
+
+        }
+        catch (Exception e) {
 
             e.printStackTrace();
 
         }
 
-        fail(connection);
+//        fail(connection);
 
-        fail(connection.getConnectionID());
+//        fail(connection.getConnectionID());
 
     }
 

@@ -1,7 +1,7 @@
 package com.way.util;
 
 public class PreferenceConstants {
-	public static final String GMAIL_SERVER = "192.168.1.6";
+	public static final String GMAIL_SERVER = "192.168.1.9";
 	public final static String ISNEEDLOG = "isneedlog";
 	public final static String REPORT_CRASH = "reportcrash";
 	public final static String ACCOUNT = "account";
